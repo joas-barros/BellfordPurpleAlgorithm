@@ -15,8 +15,8 @@ public class Graph {
         this.edgeList = new ArrayList<>();
     }
 
-    public void addEdge(int u, int v, int w) {
-        this.edgeList.add(new Edge(u, v, w));
+    public void addEdge(int source, int destiny, int weight) {
+        this.edgeList.add(new Edge(source, destiny, weight));
     }
 
     public void findShortestPaths(int source) {
@@ -31,7 +31,7 @@ public class Graph {
         dist[source] = 0;
 
         // Passo 2: Relaxar todas as arestas V-1 vezes
-        for (int i = 1; i <= this.vertices - 1; i++) {
+        for (int i = 0; i < this.vertices - 1; i++) {
             for (Edge edge : this.edgeList) {
                 int u = edge.source;
                 int v = edge.destiny;
