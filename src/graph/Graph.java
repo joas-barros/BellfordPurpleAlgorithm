@@ -1,18 +1,61 @@
 package graph;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class Graph {
     int vertices;
-    int edges;
     List<Edge> edgeList;
 
-    public Graph(int v, int e) {
+    public Graph(int v) {
         this.vertices = v;
-        this.edges = e;
         this.edgeList = new ArrayList<>();
+    }
+
+    public Graph(String filePath) {
+        this.edgeList = new ArrayList<>();
+        loadFromFile(filePath);
+    }
+
+    private void loadFromFile(String filePath) {
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))){
+
+            List<int[]> matrix = new ArrayList<>();
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                String[] tokens = line.trim().split("\\s+");
+                int[] row = new int[tokens.length];
+                for (int i = 0; i < tokens.length; i++) {
+                    if(tokens[i].equals("INF")) {
+                        row[i] = Integer.MAX_VALUE;
+                    } else {
+                        row[i] = Integer.parseInt(tokens[i]);
+                    }
+                }
+                matrix.add(row);
+            }
+
+            convertMatrixToEdgeList(matrix);
+        } catch (IOException e) {
+            System.err.println("Erro ao ler o arquivo: " + e.getMessage());
+        }
+    }
+
+    private void convertMatrixToEdgeList(List<int[]> matrix) {
+        this.vertices = matrix.size();
+        // Converter matriz de adjacência em lista de arestas
+        for (int i = 0; i < vertices; i++) {
+            for (int j = 0; j < vertices; j++) {
+                if (matrix.get(i)[j] != Integer.MAX_VALUE && i != j) {
+                    addEdge(i, j, matrix.get(i)[j]);
+                }
+            }
+        }
     }
 
     public void addEdge(int source, int destiny, int weight) {
