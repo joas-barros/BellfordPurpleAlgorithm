@@ -1,8 +1,6 @@
 package graph;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -95,20 +93,38 @@ public class Graph {
 
             // Se a distância para u não é infinito e a distância para v pode ser reduzida
             if (dist[u] != Integer.MAX_VALUE && dist[u] + w < dist[v]) {
-                System.out.println("Graph contains negative weight cycle");
+                System.out.println("Grafo contém ciclo negativo");
                 return;
             }
         }
 
-        printDistances(dist, source);
+        exportResults(source, dist);
     }
 
-    private void printDistances(int[] dist, int src) {
-        System.out.println("Distância mais curta do vértice " + src + " para todos os outros:");
-        System.out.println("Vértice \t Distância");
-        for (int i = 0; i < this.vertices; ++i) {
-            String distance = (dist[i] == Integer.MAX_VALUE) ? "INF" : String.valueOf(dist[i]);
-            System.out.println(i + "\t\t" + distance);
+    private void exportResults(int src, int[] dist) {
+        String filePath = "src/output.txt";
+
+        try (PrintWriter out = new PrintWriter(new FileWriter(filePath))) {
+
+            // --- Parte 1: Grafo original ---
+            out.println("# GRAFO ORIGINAL");
+            for (Edge edge : edgeList) {
+                out.printf("%d %d %d%n", edge.source, edge.destiny, edge.weight);
+            }
+
+            // --- Parte 2: Resultado ---
+            out.println();
+            out.printf("# DISTÂNCIAS (origem = %d)%n", src);
+
+            for (int i = 0; i < this.vertices; ++i) {
+                String distance = (dist[i] == Integer.MAX_VALUE) ? "INF" : String.valueOf(dist[i]);
+                out.printf("%d %s%n", i, distance);
+            }
+
+            System.out.println("Resultados exportados para " + filePath);
+
+        } catch (IOException e) {
+            System.err.println("Erro ao salvar o arquivo de saída: " + e.getMessage());
         }
     }
 
