@@ -99,6 +99,8 @@ public class Graph {
         }
 
         exportResults(source, dist);
+
+        exportToDot("src/output.txt", "src/output.dot");
     }
 
     private void exportResults(int src, int[] dist) {
@@ -127,6 +129,53 @@ public class Graph {
             System.err.println("Erro ao salvar o arquivo de saída: " + e.getMessage());
         }
     }
+
+    public void exportToDot(String outputTxt, String outputDot) {
+        try (BufferedReader br = new BufferedReader(new FileReader(outputTxt));
+             PrintWriter out = new PrintWriter(new FileWriter(outputDot))) {
+
+            out.println("digraph G {");
+            String line;
+            boolean inEdges = false;
+            boolean inDistances = false;
+
+            while ((line = br.readLine()) != null) {
+                line = line.trim();
+                if (line.isEmpty() || line.startsWith("#")) {
+                    if (line.startsWith("# GRAFO")) {
+                        inEdges = true;
+                        inDistances = false;
+                    } else if (line.startsWith("# DISTÂNCIAS")) {
+                        inEdges = false;
+                        inDistances = true;
+                    }
+                    continue;
+                }
+
+                if (inEdges) {
+                    // Formato: origem destino peso
+                    String[] parts = line.split("\\s+");
+                    int u = Integer.parseInt(parts[0]);
+                    int v = Integer.parseInt(parts[1]);
+                    String w = parts[2];
+                    out.printf("    %d -> %d [label=\"%s\"];\n", u, v, w);
+                } else if (inDistances) {
+                    // Formato: vertice distancia
+                    String[] parts = line.split("\\s+");
+                    String v = parts[0];
+                    String d = parts[1];
+                    out.printf("    %s [label=\"%s (dist=%s)\"];\n", v, v, d);
+                }
+            }
+
+            out.println("}");
+            System.out.println("Arquivo DOT gerado com sucesso: " + outputDot);
+
+        } catch (IOException e) {
+            System.err.println("Erro ao gerar arquivo DOT: " + e.getMessage());
+        }
+    }
+
 
 
 }

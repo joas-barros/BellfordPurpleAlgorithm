@@ -1,0 +1,17 @@
+digraph G {
+    0 -> 1 [label="8"];
+    0 -> 3 [label="3"];
+    0 -> 5 [label="5"];
+    1 -> 2 [label="6"];
+    2 -> 4 [label="4"];
+    3 -> 4 [label="-1"];
+    5 -> 1 [label="-4"];
+    5 -> 2 [label="-1"];
+    5 -> 4 [label="-3"];
+    0 [label="0 (dist=0)"];
+    1 [label="1 (dist=1)"];
+    2 [label="2 (dist=4)"];
+    3 [label="3 (dist=3)"];
+    4 [label="4 (dist=2)"];
+    5 [label="5 (dist=5)"];
+}
